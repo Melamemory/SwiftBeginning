@@ -46,7 +46,7 @@ struct Queue<T> {
     
     // 3. * Добавить свой subscript, который будет возвращать nil в случае обращения к несуществующему индексу.
     subscript(index: Int) -> T? {
-        return (index >= 0 && index < elements.count) ? elements[index - 1] : nil
+        return (index >= 0 && index < elements.count) ? elements[index] : nil
     }
 }
 
