@@ -102,7 +102,7 @@ class GameScene: SKScene {
     }
     
     private func createSnake() {
-        let snake = Snake(atPoint: CGPoint(x: view.scene!.frame.midX, y: view.scene!.frame.midY))
+        let snake = Snake(atPoint: CGPoint(x: view!.scene!.frame.midX, y: view!.scene!.frame.midY))
         addChild(snake)
     }
 }
