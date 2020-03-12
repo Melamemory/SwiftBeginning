@@ -21,7 +21,7 @@ class Snake: SKShapeNode {
         let head = SnakeHead(atPoint: point)
         body.append(head)
         addChild(head)
-        
+
         addBodyPart()
     }
     

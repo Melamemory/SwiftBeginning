@@ -123,20 +123,23 @@ class GameScene: SKScene {
 extension GameScene: SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
         let bodies = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
-        let collsionObject = bodies ^ CollisionCategories.SnakeHead
+        let collisionObject = bodies ^ CollisionCategories.SnakeHead
         
-        switch collsionObject {
+        switch collisionObject {
         case CollisionCategories.Apple:
+            debugPrint("Ate apple")
             let apple = contact.bodyA.node is Apple ? contact.bodyA.node : contact.bodyB.node
             apple?.removeFromParent()
             createApple()
 
             snake?.addBodyPart()
         case CollisionCategories.Edge:
+            debugPrint("Collision with field edge")
             snake?.removeFromParent()
             snake = nil
             createSnake()
         case CollisionCategories.Snake:
+            debugPrint("Collision with itself")
             snake?.removeFromParent()
             snake = nil
             createSnake()
