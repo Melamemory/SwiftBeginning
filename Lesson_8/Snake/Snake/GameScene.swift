@@ -32,18 +32,18 @@ class GameScene: SKScene {
         self.physicsBody?.categoryBitMask = CollisionCategories.SnakeHead
         self.physicsBody?.contactTestBitMask = CollisionCategories.Edge | CollisionCategories.Snake
         
-        let couterClockwiseButton = SKShapeNode()
-        couterClockwiseButton.path = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: 50, height: 50)).cgPath
-        couterClockwiseButton.position = CGPoint(x: view.scene!.frame.minX + 30,
+        let counterClockwiseButton = SKShapeNode()
+        counterClockwiseButton.path = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: 50, height: 50)).cgPath
+        counterClockwiseButton.position = CGPoint(x: view.scene!.frame.minX + 30,
                                                  y: view.scene!.frame.minY + 30)
         
-        couterClockwiseButton.fillColor = .lightGray
-        couterClockwiseButton.strokeColor = .lightGray
-        couterClockwiseButton.lineWidth = 10
+        counterClockwiseButton.fillColor = .lightGray
+        counterClockwiseButton.strokeColor = .lightGray
+        counterClockwiseButton.lineWidth = 10
         
-        couterClockwiseButton.name = "couterClockwiseButton"
+        counterClockwiseButton.name = "counterClockwiseButton"
         
-        addChild(couterClockwiseButton)
+        addChild(counterClockwiseButton)
         
         let clockwiseButton = SKShapeNode()
         clockwiseButton.path = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: 50, height: 50)).cgPath
@@ -68,11 +68,17 @@ class GameScene: SKScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let touchLocation = touch.location(in: self)
-            
-            guard let touchedNode = self.atPoint(touchLocation) as? SKShapeNode, touchedNode.name == "couterClockwiseButton" || touchedNode.name == "clockwiseButton" else { return }
+
+            guard let touchedNode = self.atPoint(touchLocation) as? SKShapeNode,
+                touchedNode.name == "counterClockwiseButton" || touchedNode.name == "clockwiseButton" else { return }
             
             touchedNode.fillColor = .green
-            
+
+            if touchedNode.name == "counterClockwiseButton" {
+                snake!.moveCounterClockwise()
+            } else {
+                snake!.moveClockwise()
+            }
         }
     }
     
@@ -81,7 +87,14 @@ class GameScene: SKScene {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+        for touch in touches {
+            let touchLocation = touch.location(in: self)
+
+            guard let touchedNode = self.atPoint(touchLocation) as? SKShapeNode,
+                touchedNode.name == "counterClockwiseButton" || touchedNode.name == "clockwiseButton" else { return }
+            
+            touchedNode.fillColor = .lightGray
+        }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -102,8 +115,8 @@ class GameScene: SKScene {
     }
     
     private func createSnake() {
-        let snake = Snake(atPoint: CGPoint(x: view!.scene!.frame.midX, y: view!.scene!.frame.midY))
-        addChild(snake)
+        snake = Snake(atPoint: CGPoint(x: view!.scene!.frame.midX, y: view!.scene!.frame.midY))
+        addChild(snake!)
     }
 }
 
@@ -117,6 +130,8 @@ extension GameScene: SKPhysicsContactDelegate {
             let apple = contact.bodyA.node is Apple ? contact.bodyA.node : contact.bodyB.node
             apple?.removeFromParent()
             createApple()
+
+            snake?.addBodyPart()
         case CollisionCategories.Edge:
             break
         case CollisionCategories.Snake:
