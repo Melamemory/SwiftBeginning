@@ -19,6 +19,7 @@ struct CollisionCategories {
 class GameScene: SKScene {
     
     var snake: Snake?
+    var apple: Apple?
     
     override func didMove(to view: SKView) {
         backgroundColor = .darkGray
@@ -106,12 +107,21 @@ class GameScene: SKScene {
         snake?.move()
     }
     
+    private func resetGame() {
+        apple?.removeFromParent()
+        createApple()
+
+        snake?.removeFromParent()
+        snake = nil
+        createSnake()
+    }
+
     private func createApple() {
         let randX = CGFloat(arc4random_uniform(UInt32(view!.scene!.frame.maxX - 10)) + 1)
         let randY = CGFloat(arc4random_uniform(UInt32(view!.scene!.frame.maxY - 10)) + 1)
         
-        let apple = Apple(position: CGPoint(x: randX, y: randY))
-        addChild(apple)
+        apple = Apple(position: CGPoint(x: randX, y: randY))
+        addChild(apple!)
     }
     
     private func createSnake() {
@@ -135,14 +145,10 @@ extension GameScene: SKPhysicsContactDelegate {
             snake?.addBodyPart()
         case CollisionCategories.Edge:
             debugPrint("Collision with field edge")
-            snake?.removeFromParent()
-            snake = nil
-            createSnake()
+            resetGame()
         case CollisionCategories.Snake:
             debugPrint("Collision with itself")
-            snake?.removeFromParent()
-            snake = nil
-            createSnake()
+            resetGame()
         default:
             break
         }
