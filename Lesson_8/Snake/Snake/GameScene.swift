@@ -29,7 +29,7 @@ class GameScene: SKScene {
         
         physicsWorld.contactDelegate = self
         
-        self.physicsBody?.categoryBitMask = CollisionCategories.SnakeHead
+        self.physicsBody?.categoryBitMask = CollisionCategories.Edge
         self.physicsBody?.contactTestBitMask = CollisionCategories.Edge | CollisionCategories.Snake
         
         let counterClockwiseButton = SKShapeNode()
@@ -133,7 +133,9 @@ extension GameScene: SKPhysicsContactDelegate {
 
             snake?.addBodyPart()
         case CollisionCategories.Edge:
-            break
+            snake?.removeFromParent()
+            snake = nil
+            createSnake()
         case CollisionCategories.Snake:
             snake?.removeFromParent()
             snake = nil
